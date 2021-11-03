@@ -21,6 +21,7 @@ namespace EFCRUDAPP
         private void Form1_Load(object sender, EventArgs e)
         {
             Clear();
+            PopulateDataGridView();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -28,13 +29,6 @@ namespace EFCRUDAPP
             Clear();
         }
 
-        void Clear()
-        {
-            txtFirstName.Text = txtLastName.Text = txtCity.Text = txtCity.Text = "";
-            btnSave.Text = "Save";
-            btnDelete.Enabled = false;
-            model.CustomerID = 0;
-        }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
@@ -49,7 +43,23 @@ namespace EFCRUDAPP
             }
 
             Clear();
+            PopulateDataGridView();
             MessageBox.Show("Submitted successfully");
+        }
+        void Clear()
+        {
+            txtFirstName.Text = txtLastName.Text = txtCity.Text = txtCity.Text = "";
+            btnSave.Text = "Save";
+            btnDelete.Enabled = false;
+            model.CustomerID = 0;
+        }
+
+        void PopulateDataGridView()
+        {
+            using(EFDBEntities db = new EFDBEntities())
+            {
+                dbvCustomer.DataSource = db.Customer.ToList<Customer>();
+            }
         }
     }
 }
