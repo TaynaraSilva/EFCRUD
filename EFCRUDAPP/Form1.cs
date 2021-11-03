@@ -35,5 +35,21 @@ namespace EFCRUDAPP
             btnDelete.Enabled = false;
             model.CustomerID = 0;
         }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            model.FirstName = txtFirstName.Text.Trim();
+            model.LastName = txtLastName.Text.Trim();
+            model.City = txtCity.Text.Trim();
+            model.Address = txtAddress.Text.Trim();
+            using (EFDBEntities db = new EFDBEntities())
+            {
+                db.Customer.Add(model);
+                db.SaveChanges();
+            }
+
+            Clear();
+            MessageBox.Show("Submitted successfully");
+        }
     }
 }
