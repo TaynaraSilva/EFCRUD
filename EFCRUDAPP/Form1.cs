@@ -90,5 +90,25 @@ namespace EFCRUDAPP
                 btnDelete.Enabled = true;
             }
         }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if(MessageBox.Show("Are you sure to delete this record?", "EF CRUD Opreration", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                using(EFDBEntities db = new EFDBEntities())
+                {
+                    var entry = db.Entry(model);
+                    if (entry.State == EntityState.Detached)
+                        db.Customer.Attach(model);
+
+                    db.Customer.Remove(model);
+                    db.SaveChanges();
+                    PopulateDataGridView();
+                    Clear();
+                    MessageBox.Show("Deleted Successfully");
+
+                }
+            }
+        }
     }
 }
