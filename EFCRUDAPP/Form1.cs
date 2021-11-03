@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -38,7 +39,12 @@ namespace EFCRUDAPP
             model.Address = txtAddress.Text.Trim();
             using (EFDBEntities db = new EFDBEntities())
             {
-                db.Customer.Add(model);
+                if (model.CustomerID == 0) //insert operation
+                {
+                    db.Customer.Add(model);
+                }
+                else // updade opration
+                    db.Entry(model).State = EntityState.Modified;
                 db.SaveChanges();
             }
 
@@ -48,17 +54,40 @@ namespace EFCRUDAPP
         }
         void Clear()
         {
-            txtFirstName.Text = txtLastName.Text = txtCity.Text = txtCity.Text = "";
+            txtFirstName.Text = txtLastName.Text = txtCity.Text = txtAddress.Text = "";
             btnSave.Text = "Save";
             btnDelete.Enabled = false;
             model.CustomerID = 0;
         }
 
         void PopulateDataGridView()
+
         {
-            using(EFDBEntities db = new EFDBEntities())
+
+            dbvCustomer.AutoGenerateColumns = false;
+            using (EFDBEntities db = new EFDBEntities())
             {
                 dbvCustomer.DataSource = db.Customer.ToList<Customer>();
+            }
+        }
+
+  
+        private void dbvCustomer_DoubleClick(object sender, EventArgs e)
+        {
+            if (dbvCustomer.CurrentRow.Index != -1)
+            {
+                model.CustomerID = Convert.ToInt32(dbvCustomer.CurrentRow.Cells["CustomerID"].Value);
+
+                using (EFDBEntities db = new EFDBEntities())
+                {
+                    model = db.Customer.Where(x => x.CustomerID == model.CustomerID).FirstOrDefault();
+                    txtFirstName.Text = model.FirstName;
+                    txtLastName.Text = model.LastName;
+                    txtCity.Text = model.City;
+                    txtAddress.Text = model.Address;
+                }
+                btnSave.Text = "Updade";
+                btnDelete.Enabled = true;
             }
         }
     }
